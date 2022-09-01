@@ -9,10 +9,8 @@ spec:
   chart:
     spec:
       chart: ./clusters/local-test-helm-flux-cluster/local-test
-      version: 0.1.0
       sourceRef:
         kind: GitRepository
         name: fluxcd-test
-        namespace: default
       interval: 15s
 
