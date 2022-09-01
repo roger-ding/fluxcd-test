@@ -1,12 +1,10 @@
 ---
 apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: GitRepository
+kind: HelmRepository
 metadata:
   name: local-test
   namespace: flux-system
 spec:
   interval: 15s
-  ref:
-    branch: main
   url: https://github.com/roger-ding/fluxcd-test
 
