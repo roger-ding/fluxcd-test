@@ -5,10 +5,11 @@ metadata:
   namespace: default
 spec:
   containers:
-  - image: ubuntu
+  - name: ubuntu
+    image: ubuntu
     command:
-      - "echo"
-      - "Hello World!"
+    - /bin/sh
+    - -c
+    - echo "Hello World!" && sleep infinity
     imagePullPolicy: IfNotPresent
-    name: ubuntu
   restartPolicy: Always
