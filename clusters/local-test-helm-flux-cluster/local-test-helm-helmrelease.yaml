@@ -10,7 +10,7 @@ spec:
       chart: local-test
       reconcileStrategy: ChartVersion
       sourceRef:
-        kind: HelmRepository
+        kind: GitRepository
         name: fluxcd-test
   interval: 15s
 
