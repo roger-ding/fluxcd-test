@@ -20,8 +20,8 @@ $> git push
 ```
 
 ## Check connection to kubernetes kind cluster
-* $> kc get nodes
 ```
+$> kc get nodes
 NAME                   STATUS   ROLES                  AGE   VERSION
 fluxcd-control-plane   Ready    control-plane,master   25h   v1.23.4
 ```
