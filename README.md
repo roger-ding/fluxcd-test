@@ -86,6 +86,7 @@ Preferred method as you are able to view the change in real time. To install wat
 ### Verify podinfo resources are created and running
 ```
 $> echo "\n*** PODS ***"; kc get pod; echo "\n*** DEPLOYMENTS ***"; kc get deploy; echo "\n*** SERVICES ***"; kc get services
+
 *** PODS ***
 NAME                       READY   STATUS    RESTARTS   AGE
 podinfo-66df4b59fb-gjmvr   1/1     Running   0          35m
@@ -99,6 +100,16 @@ podinfo   2/2     2            2           35m
 NAME         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)             AGE
 kubernetes   ClusterIP   10.96.0.1     <none>        443/TCP             26h
 podinfo      ClusterIP   10.96.159.2   <none>        9898/TCP,9999/TCP   35m
+```
+
+## To uninstall flux from kind cluster
+```
+$> flux uninstall
+Are you sure you want to delete Flux and its custom resource definitions: y
+► deleting components in flux-system namespace
+...
+✔ Namespace/flux-system deleted
+✔ uninstall finished
 ```
 
 # That's it! 
