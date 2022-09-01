@@ -8,7 +8,6 @@ spec:
   chart:
     spec:
       chart: local-test
-      reconcileStrategy: ChartVersion
       sourceRef:
         kind: GitRepository
         name: fluxcd-test
