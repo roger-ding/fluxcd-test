@@ -1,0 +1,15 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: GitRepository
+metadata:
+  name: local-test
+  namespace: flux-system
+spec:
+  interval: 15s
+  url: https://github.com/roger-ding/local-fluxcd-test-files
+  ref:
+    branch: main
+  ignore: |
+    # exclude all
+    /*
+    # include charts directory
+    !/helm-charts/    
