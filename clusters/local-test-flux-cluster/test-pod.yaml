@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu
+  namespace: default
+spec:
+  containers:
+  - image: ubuntu
+    command:
+      - "echo"
+      - "Hello World!"
+    imagePullPolicy: IfNotPresent
+    name: ubuntu
+  restartPolicy: Always
