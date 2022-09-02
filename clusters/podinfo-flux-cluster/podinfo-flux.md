@@ -21,7 +21,7 @@ $> flux bootstrap github --owner=$GITHUB_USER --repository=fluxcd-test --branch=
 ✔ all components are healthy
 ```
 
-## Using flux cd to spin up podinfo resources
+## Using flux cd to spin up resources
 ```
 $> cd fluxcd-test
 $> flux create source git podinfo --url=https://github.com/$GITHUB_USER/podinfo --branch=master --interval=15s --export > ./clusters/podinfo-flux-cluster/podinfo-source.yaml
