@@ -27,3 +27,13 @@ $> flux check --pre
 ✔ prerequisites checks passed
 ```
 
+## Proceed to clusters directory to view cluster files and configuration of different test scenarios using flux cd
+1. [local-test-flux-cluster](https://github.com/roger-ding/fluxcd-test/tree/main/clusters/local-test-flux-cluster)
+2. [podinfo-flux-cluster](https://github.com/roger-ding/fluxcd-test/tree/main/clusters/podinfo-flux-cluster)
+3. [podinfo-helm-flux-cluster](https://github.com/roger-ding/fluxcd-test/tree/main/clusters/podinfo-helm-flux-cluster)
+
+## Documentation and step by step links
+1. [local-test-flux-cluster how-to](https://github.com/roger-ding/fluxcd-test/blob/main/clusters/local-test-flux-cluster/local-test-flux.md)
+2. [podinfo-flux-cluster how-to](https://github.com/roger-ding/fluxcd-test/blob/main/clusters/podinfo-flux-cluster/podinfo-flux.md)
+3. [podinfo-helm-flux-cluster how-to](https://github.com/roger-ding/fluxcd-test/blob/main/clusters/podinfo-helm-flux-cluster/podinfo-helm-flux.md)
+

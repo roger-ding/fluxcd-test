@@ -3,7 +3,7 @@
 ## Fork podinfo repository to personal github account
 Fork the following [podinfo repo](https://github.com/stefanprodan/podinfo)  
 
-## Uninstall flux from kind cluster
+## Uninstall existing flux from kind cluster for new setup
 ```
 $> flux uninstall
 Are you sure you want to delete Flux and its custom resource definitions: y

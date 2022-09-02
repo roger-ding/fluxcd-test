@@ -2,7 +2,7 @@
 
 Test files are located in this repo ---> https://github.com/roger-ding/local-fluxcd-test-files
 
-## Uninstall flux from kind cluster
+## Uninstall existing flux from kind cluster for new setup
 ```
 $> flux uninstall
 Are you sure you want to delete Flux and its custom resource definitions: y
