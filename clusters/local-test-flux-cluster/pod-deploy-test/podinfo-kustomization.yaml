@@ -12,3 +12,4 @@ spec:
     kind: GitRepository
     name: local-test-centos
   targetNamespace: flux-system
+

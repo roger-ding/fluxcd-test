@@ -1,108 +1,9 @@
-# Fluxcd on kind cluster (using podinfo)
+# Fluxcd on kind cluster (using podinfo) - Deploying with Helm
 
 ## Fork podinfo repository to personal github account
 Fork the following [podinfo repo](https://github.com/stefanprodan/podinfo)  
-```
-$> export GITHUB_USER=BLAHBLAH
-$> export GITHUB_TOKEN=BLAHBLAH
-$> git clone https://github.com/$GITHUB_USER/podinfo.git
-$> cd podinfo/kustomize
-```
 
-### Edit the following file by adding "namespace: default" to metadata:
-1. deployment.yaml
-2. service.yaml
-3. hpa.yaml
-
-```
-$> git commit -am "add default namespace"
-$> git push
-```
-
-## Check connection to kubernetes kind cluster
-```
-$> kc get nodes
-NAME                   STATUS   ROLES                  AGE   VERSION
-fluxcd-control-plane   Ready    control-plane,master   25h   v1.23.4
-```
-
-## Install flux and check that it is on latest version and prechecks pass
-```
-$> curl -s https://fluxcd.io/install.sh
-$> mv install.sh flux-install.sh
-$> chmod +x flux-install.sh
-$> ./flux-install.sh
-$> flux --version
-flux version 0.33.0
-$> flux check --pre
-► checking prerequisites
-✔ Kubernetes 1.23.4 >=1.20.6-0
-✔ prerequisites checks passed
-```
-
-## Bootstrap flux cd repository in personal github account
-```
-$> flux bootstrap github --owner=$GITHUB_USER --repository=fluxcd-test --branch=main --path=./clusters/podinfo-flux-cluster --personal
-► connecting to github.com
-✔ repository "https://github.com/roger-ding/fluxcd-test" created
-► cloning branch "main" from Git repository "https://github.com/roger-ding/fluxcd-test.git"
-...
-✔ all components are healthy
-```
-
-## Using flux cd to spin up podinfo resources
-```
-$> git clone https://github.com/$GITHUB_USER/fluxcd-test.git
-$> cd fluxcd-test
-$> flux create source git podinfo --url=https://github.com/$GITHUB_USER/podinfo --branch=master --interval=30s --export > ./clusters/podinfo-flux-cluster/podinfo-source.yaml
-$> flux create kustomization podinfo --source=podinfo --path="./kustomize" --prune=true --interval=5m --export > ./clusters/podinfo-flux-cluster/podinfo-kustomization.yaml
-$> git add . && git commit -m "podinfo added"
-$> git push
-```
-
-### Verify flux cd state
-```
-$> flux get all
-NAME                     	REVISION      	SUSPENDED	READY	MESSAGE
-gitrepository/flux-system	main/86fcc24  	False    	True 	stored artifact for revision 'main/86fcc249a3b6b574d4757db0854b95409e3012d5'
-gitrepository/podinfo    	master/fa5f988	False    	True 	stored artifact for revision 'master/fa5f9889da837da36f3f74dd5be52bd00567bd58'
-
-NAME                     	REVISION      	SUSPENDED	READY	MESSAGE
-kustomization/flux-system	main/86fcc24  	False    	True 	Applied revision: main/86fcc24
-kustomization/podinfo    	master/fa5f988	False    	True 	Applied revision: master/fa5f988
-```
-
-*** OR ***
-```
-$> watch flux get kustomizations 
-Every 2.0s: flux get kustomizations 
-
-NAME            REVISION        SUSPENDED       READY   MESSAGE
-flux-system     main/86fcc24    False           True    Applied revision: main/86fcc24
-podinfo         master/fa5f988  False           True    Applied revision: master/fa5f988
-```
-Preferred method as you are able to view the change in real time. To install watch, use google to find installation based on OS
-
-### Verify podinfo resources are created and running
-```
-$> echo "\n*** PODS ***"; kc get pod; echo "\n*** DEPLOYMENTS ***"; kc get deploy; echo "\n*** SERVICES ***"; kc get services
-
-*** PODS ***
-NAME                       READY   STATUS    RESTARTS   AGE
-podinfo-66df4b59fb-gjmvr   1/1     Running   0          35m
-podinfo-66df4b59fb-ppddw   1/1     Running   0          35m
-
-*** DEPLOYMENTS ***
-NAME      READY   UP-TO-DATE   AVAILABLE   AGE
-podinfo   2/2     2            2           35m
-
-*** SERVICES ***
-NAME         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)             AGE
-kubernetes   ClusterIP   10.96.0.1     <none>        443/TCP             26h
-podinfo      ClusterIP   10.96.159.2   <none>        9898/TCP,9999/TCP   35m
-```
-
-## To uninstall flux from kind cluster
+## Uninstall flux from kind cluster
 ```
 $> flux uninstall
 Are you sure you want to delete Flux and its custom resource definitions: y
@@ -112,4 +13,51 @@ Are you sure you want to delete Flux and its custom resource definitions: y
 ✔ uninstall finished
 ```
 
-# That's it! 
+## Bootstrap flux cd repository in personal github account
+```
+$> flux bootstrap github --owner=$GITHUB_USER --repository=fluxcd-test --branch=main --path=./clusters/podinfo-helm-flux-cluster --personal
+► connecting to github.com
+...
+✔ all components are healthy
+```
+
+## Using flux cd to spin up podinfo resources
+```
+$> cd fluxcd-test
+$> flux create source git podinfo --url=https://github.com/$GITHUB_USER/podinfo --branch=master --interval=15s --ignore-paths "# exclude all,/*,# include charts directory,\!/charts/" --export > ./clusters/podinfo-helm-flux-cluster/podinfo-helm-source.yaml
+$> flux create helmrelease podinfo --chart ./charts/podinfo --source GitRepository/podinfo --namespace flux-system --target-namespace flux-system --chart-interval 15s --interval 15s --export > ./clusters/podinfo-helm-flux-cluster/podinfo-helm-release.yaml
+$> git add . && git commit -m "helm podinfo added"
+$> git push
+```
+
+### Verify flux cd state
+```
+$> watch flux get all 
+Every 2.0s: flux get all 
+
+NAME                            REVISION        SUSPENDED       READY   MESSAGE
+gitrepository/flux-system       main/58d1dd7    False           True    stored artifact for revision 'main/58d1dd7375524edf2b02bbf7e6fb72ec18d10261'
+gitrepository/podinfo           master/79f8138  False           True    stored artifact for revision 'master/79f81383288bf6542fcb5bdd8144b826b33b36e7'
+
+NAME                            REVISION        SUSPENDED       READY   MESSAGE
+helmchart/flux-system-podinfo   6.2.0           False           True    packaged 'podinfo' chart with version '6.2.0'
+
+NAME                    REVISION        SUSPENDED       READY   MESSAGE
+helmrelease/podinfo     6.2.0           False           True    Release reconciliation succeeded
+
+NAME                            REVISION        SUSPENDED       READY   MESSAGE
+kustomization/flux-system       main/58d1dd7    False           True    Applied revision: main/58d1dd7
+```
+
+### Verify podinfo resources are created and running
+```
+$> helm list -A
+NAME               	NAMESPACE  	REVISION	UPDATED                                	STATUS  	CHART        	APP VERSION
+flux-system-podinfo	flux-system	1       	2022-09-02 17:54:19.329777941 +0000 UTC	deployed	podinfo-6.2.0	6.2.0
+
+$> kc get pod,deploy,service -A | grep podinfo
+flux-system          pod/flux-system-podinfo-6c8bbc9c6b-t46k7           1/1     Running   0          38s
+flux-system          deployment.apps/flux-system-podinfo                1/1     1            1           38s
+flux-system          service/flux-system-podinfo                        ClusterIP   10.96.135.152   <none>        9898/TCP,9999/TCP        38s
+```
+
